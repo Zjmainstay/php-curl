@@ -1,0 +1,29 @@
+{
+    "name": "zjmainstay/php-curl",
+    "description": "PHP利用cURL实现模拟登录与采集",
+    "type": "library",
+    "keywords": [
+        "php",
+        "php curl",
+        "php curl login",
+        "php 模拟登录",
+        "php 模拟登录采集"
+    ],
+    "homepage": "http://www.zjmainstay.cn",
+    "license": "Apache License v2.0",
+    "authors": [
+        {
+            "name": "Zjmainstay",
+            "email": "zjmainstay@163.com",
+            "role": "lead"
+        }
+    ],
+    "bin": [
+        "phpunit"
+    ],
+    "autoload": {
+        "psr-4" : {
+            "PHPCurl\\" : "src/"
+        }
+    }
+}
