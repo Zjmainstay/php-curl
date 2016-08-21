@@ -16,10 +16,6 @@ $content = $autologin->execCurl($curl1);
 $curl2 = "curl 'http://book.m.5read.com/search?sw=php&channel=search&Field=all&Sort=3&page=1&ecode=UTF-8'";
 $content = $autologin->execCurl($curl2);
 
-
-// file_put_contents('/tmp/a.html', $content);
-$content = file_get_contents('/tmp/a.html');
-
 $pattern = '#(作者:.+)#';
 
 preg_match_all($pattern, $content, $matches);
