@@ -28,7 +28,7 @@ class CurlAutoLogin {
         if(!empty($logPath) && is_writable($logPath)) {
             $this->logPath = $logPath;
         } else {
-            $this->logPath = __DIR__ . '/../logs/run.log';
+            $this->logPath = dirname(__FILE__) . '/../logs/run.log';
         }
     }
 
@@ -40,7 +40,7 @@ class CurlAutoLogin {
      * @return mixed
      */
     public function execCurl($curlContent, $callbackBefore = false, $callbackAfter = false) {
-        $parseCurlResult = $this->_parseCurl($curlContent);
+        $parseCurlResult = $this->parseCurl($curlContent);
         if(!empty($callbackBefore)) {
             $parseCurlResult = $callbackBefore($parseCurlResult);
         }
@@ -58,32 +58,42 @@ class CurlAutoLogin {
      * @param  string $curlContent 利用Firefox浏览器复制cURL命令
      * @return bool|array
      */
-    protected function _parseCurl($curlContent) {
+    public function parseCurl($curlContent) {
         if(!preg_match("#curl '([^']*?)'#is", $curlContent, $matchUrl)) {
             return false;
+        }
+
+        //get cookie
+        if(!preg_match("#-H '(Cookie:[^']*)'#is", $curlContent, $cookieMatch)) {
+            $cookieData = '';
+        } else {
+            $cookieData = $cookieMatch[1];
         }
 
         //remove cookie data in header
         $curlContent = preg_replace("#-H 'Cookie:[^']*'#is", '', $curlContent);
 
+        //get header
         if(!preg_match_all("#-H '([^']*?)'#is", $curlContent, $headerMatches)) {
-            $httpHeader = [];
+            $httpHeader = array();
         } else {
             $httpHeader = $headerMatches[1];
         }
 
+        //get data
         if(!preg_match("#--data '([^']*?)'#is", $curlContent, $postDataMatch)) {
             $postData = '';
         } else {
             $postData = $postDataMatch[1];
         }
 
-        return [
+        return array(
             'url'       => $matchUrl[1],
             'header'    => $httpHeader,
             'post'      => $postData,
-            'opt'       => [],         //扩展opt，在callbackBefore里添加
-        ];
+            'opt'       => array(),         //扩展opt，在callbackBefore里添加
+            'cookie'    => $cookieData,
+        );
     }
 
     /**
@@ -108,6 +118,7 @@ class CurlAutoLogin {
 
         //add ssl support
         if(substr($parseCurlResult['url'], 0, 5) == 'https') {
+            // curl_setopt($ch, CURLOPT_SSLVERSION,1);          //error:14077458:SSL routines:SSL23_GET_SERVER_HELLO:reason(1112)
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);    //SSL 报错时使用
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);    //SSL 报错时使用
         }
@@ -242,6 +253,7 @@ class CurlAutoLogin {
 
         //add ssl support
         if(substr($url, 0, 5) == 'https') {
+            // curl_setopt($ch, CURLOPT_SSLVERSION,1);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);    //SSL 报错时使用
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);    //SSL 报错时使用
         }
@@ -287,6 +299,7 @@ class CurlAutoLogin {
 
         //add ssl support
         if(substr($url, 0, 5) == 'https') {
+            // curl_setopt($ch, CURLOPT_SSLVERSION,1);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);    //SSL 报错时使用
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);    //SSL 报错时使用
         }
