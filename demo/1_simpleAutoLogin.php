@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * 简单的模拟登录示例
+ * @author Zjmainstay
+ * @website http://www.zjmainstay.cn
+ * @project https://github.com/Zjmainstay/php-curl
+ * 
+ * 访问登录页，提交登录表单，查看登录结果
+ */
+
 require_once __DIR__.'/../vendor/autoload.php';
 
 $autologin = new PHPCurl\CurlAutoLogin();

@@ -2,6 +2,9 @@
 
 /**
  * 模拟微信访问一个外部链接
+ * @author Zjmainstay
+ * @website http://www.zjmainstay.cn
+ * @project https://github.com/Zjmainstay/php-curl
  * 
  * 由于微信需要扫码登录，目前没有对微信扫码登录做研究，
  * 而其登录成功后，一段时间内的cookie信息可重复使用，

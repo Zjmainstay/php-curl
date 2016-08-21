@@ -2,8 +2,12 @@
 
 /**
  * 预加载cookie，然后访问其他页面
+ * @author Zjmainstay
+ * @website http://www.zjmainstay.cn
+ * @project https://github.com/Zjmainstay/php-curl
  *
  * 解决页面cookie依赖问题
+ * 没访问 http://m.5read.com/523 就直接访问 http://book.m.5read.com/search?sw=php&channel=search&Field=all&Sort=3&page=1&ecode=UTF-8 会提示错误
  */
 
 require_once __DIR__.'/../vendor/autoload.php';
