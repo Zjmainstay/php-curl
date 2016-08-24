@@ -344,4 +344,17 @@ class CurlAutoLogin {
 
         return false;
     }
+
+    /**
+     * 获取换行符
+     */
+    public function getLineBreak() {
+        if('cli' == PHP_SAPI) {
+            $lineBreak = "\n";
+        } else {
+            $lineBreak = "<br>";
+        }
+
+        return $lineBreak;
+    }
 }

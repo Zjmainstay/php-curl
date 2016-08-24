@@ -14,8 +14,14 @@
 
 require_once __DIR__.'/../vendor/autoload.php';
 
+//此示例操作说明
+//1. 利用浏览器扫码登录微信（或其他登录）
+//2. 访问你要访问的页面，并复制访问成功的curl命令
+//3. 把curl命令复制结果填入下面的$curl = "";中
+
 //方法一 利用execCurl前置回调添加cookie到header中
 $autologin = new PHPCurl\CurlAutoLogin();
+$lineBreak = $autologin->getLineBreak();
 //复制浏览器登录成功后，访问https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxcheckurl?requrl=http%3A%2F%2Fwww.zjmainstay.cn的curl命令
 $curl = "curl 'https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxcheckurl?requrl=http%3A%2F%2Fwww.zjmainstay.cn' -H 'Host: wx.qq.com' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:47.0) Gecko/20100101 Firefox/46.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3' -H 'Accept-Encoding: gzip, deflate, br' -H 'Cookie: pgv_info=ssid=s7821947904; pgv_pvid=7479620263 ...' -H 'Connection: keep-alive' -H 'Cache-Control: max-age=0'";
 
@@ -25,9 +31,9 @@ $content = $autologin->execCurl($curl, function($parseCurlResult) {
 });
 $res = $autologin->assertContainStr($content, '请不要在该网页上填写QQ账号及密码');
 if($res) {
-    echo "Yes\n";
+    echo "Yes" . $lineBreak;
 } else {
-    echo "No\n";
+    echo "No" . $lineBreak;
 }
 
 
@@ -43,7 +49,7 @@ $header = array_merge((array)$curlInfo['header'], array($curlInfo['cookie']));
 $content = $autologin->getUrl($url, $header);
 $res = $autologin->assertContainStr($content, '请不要在该网页上填写QQ账号及密码');
 if($res) {
-    echo "Yes\n";
+    echo "Yes" . $lineBreak;
 } else {
-    echo "No\n";
+    echo "No" . $lineBreak;
 }
