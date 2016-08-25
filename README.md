@@ -7,7 +7,7 @@ PHP利用cURL实现模拟登录与采集，提供大量示例。（关键词：p
 ```
 git clone https://github.com/Zjmainstay/php-curl.git
 cd php-curl
-composer dump-autoload
+composer install
 #测试
 php demo/1_simpleAutoLogin.php
 ```
