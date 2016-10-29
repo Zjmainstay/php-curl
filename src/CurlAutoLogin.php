@@ -55,6 +55,23 @@ class CurlAutoLogin {
     }
 
     /**
+     * 携带cookie执行curl命令
+     * @param  string  $curlContent    利用Firefox浏览器复制cURL命令
+     * @param  boolean $callbackBefore 对curl结果前置处理，如更换用户名、密码等
+     * @param  boolean $callbackAfter  对采集结果后置处理，如解析结果的csrf token等
+     * @return mixed
+     */
+    public function execCurlWithCookie($curlContent, $callbackBefore = false, $callbackAfter = false) {
+        return $this->execCurl($curlContent, function($parseCurlResult) use ($callbackBefore) {
+            $parseCurlResult['header'][] = $parseCurlResult['cookie'];
+            if(!empty($callbackBefore)) {
+                $parseCurlResult = $callbackBefore($parseCurlResult);
+            }
+            return $parseCurlResult;
+        }, $callbackAfter);
+    }
+
+    /**
      * 解析curl信息
      * @param  string $curlContent 利用Firefox浏览器复制cURL命令
      * @return bool|array
