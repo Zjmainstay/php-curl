@@ -44,7 +44,10 @@ $lineBreak = $autologin->getLineBreak();
 var res = '';
 var token = document.cookie.match(/token=([^;]+)/)[1]
 $(".note-list-item").each(function(){
-  res += '"https://note.wiz.cn/api/document/info?client_type=web2.0&api_version=6&token='+token+'&kb_guid='+$(this).attr('data-kbguid')+'&document_guid='+$(this).attr('data-docguid')+'&_='+(Math.floor(new Date().getTime() / 1000))+(parseInt(Math.random()*1000))+'",' + "\n";
+  var title = $(this).find(".title").attr('title');
+  res += '"https://note.wiz.cn/api/document/info?client_type=web2.0&api_version=6&token='
+      +token+'&kb_guid='+$(this).attr('data-kbguid')+'&document_guid='+$(this).attr('data-docguid')
+      +'&_='+(Math.floor(new Date().getTime() / 1000))+(parseInt(Math.random()*1000))+'", //' +title+ "\n";
 });
 console.log(res);
 
