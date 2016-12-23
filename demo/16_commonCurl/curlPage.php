@@ -10,9 +10,10 @@
  * @param  array $header    header头数组，curl命令里的-H参数组成的数组
  * @param  string $cookieSaveFile    存储cookie的文件
  * @param  string $cookieGetFile     读取cookie的文件（可以是上一个getPage存下来的cookie文件）
+ * @param  string $timeout 超时时间
  * @return string
  */
-function curlPage( $url, $postData = array(), $header = array(), $cookieSaveFile = '', $cookieGetFile = '' , $timeout = 60) {
+function curlPage( $url, $postData = array(), $header = array(), $cookieSaveFile = '', $cookieGetFile = '' , $timeout = 60 ) {
     $ch  = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);       //返回数据不直接输出
     curl_setopt($ch, CURLOPT_ENCODING, "gzip");        //指定gzip压缩
