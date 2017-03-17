@@ -2,7 +2,7 @@
 
 /**
  * 页面采集通用方法
- * @author  Zjmainsta
+ * @author  Zjmainstay
  * @website http://www.zjmainstay.cn/php-curl
  *
  * @param  string $url      采集的url
