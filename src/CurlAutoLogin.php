@@ -77,7 +77,7 @@ class CurlAutoLogin {
      * @return bool|array
      */
     public function parseCurl($curlContent) {
-        if(!preg_match("#curl '([^']*?)'#is", $curlContent, $matchUrl)) {
+        if(!preg_match("#curl '([^']*)'#is", $curlContent, $matchUrl)) {
             return false;
         }
 
@@ -92,14 +92,14 @@ class CurlAutoLogin {
         $curlContent = preg_replace("#-H 'Cookie:[^']*'#is", '', $curlContent);
 
         //get header
-        if(!preg_match_all("#-H '([^']*?)'#is", $curlContent, $headerMatches)) {
+        if(!preg_match_all("#-H '([^']*)'#is", $curlContent, $headerMatches)) {
             $httpHeader = array();
         } else {
             $httpHeader = $headerMatches[1];
         }
 
         //get data
-        if(!preg_match("#--data '([^']*?)'#is", $curlContent, $postDataMatch)) {
+        if(!preg_match("#--data '([^']*)'#is", $curlContent, $postDataMatch)) {
             $postData = '';
         } else {
             $postData = $postDataMatch[1];
