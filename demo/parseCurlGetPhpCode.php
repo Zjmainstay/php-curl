@@ -8,7 +8,11 @@
  */
 function parseCurlToCode($curlContent, $withCookie = false, $timeout = 10) {
     if(!preg_match("#curl '([^']*?)'#is", $curlContent, $matchUrl)) {
-        return false;
+        if(!preg_match('#curl "([^"]*?)"#is', $curlContent, $matchUrl)) {
+            return false;
+        } else {
+            $curlContent = str_replace('"', "'", $curlContent);
+        }
     }
     //get cookie
     if(!preg_match("#-H '(Cookie:[^']*)'#is", $curlContent, $cookieMatch)) {
