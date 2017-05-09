@@ -120,5 +120,15 @@ if(!empty($_POST['curl'])) {
         <div>超时时间:<input type="text" name="timeout" value="10" placeholder="cURL超时时间"></div>
         <div><input type="submit" value="提交"></div>
     </form>
+    <br>
+    <br>
+    <br>
+    <p>
+        <strong>如何从浏览器获取cURL命令</strong>
+        <br>
+        <span>利用浏览器的开发者工具（控制台），Firefox如下图：</span>
+        <br>
+        <img src="../images/get-curl-text.png" alt="如何获取cURL命令" width="800">
+    </p>
 </body>
 </html>
