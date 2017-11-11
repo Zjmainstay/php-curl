@@ -38,10 +38,11 @@ function parseCurlToCode($curlContent, $withCookie = false, $timeout = 10) {
     $url = $matchUrl[1];
     $header = $httpHeader;
     $postData = $curlPostData;
+    $cookie   = $cookieData;
     if($withCookie) {
-        $cookie = $cookieData;
+        $cookieComment = '';
     } else {
-        $cookie = '';
+        $cookieComment = '// ';
     }
 
     $tpl = <<<'CONTENT'
@@ -49,9 +50,7 @@ function parseCurlToCode($curlContent, $withCookie = false, $timeout = 10) {
     $url = '%s';
     $header = %s;
     $postData = %s;
-    $cookie = %s;
-    // $cookieSaveFile = '';
-    // $cookieGetFile = '';
+    %s$cookie = %s; //需要cookie的话去掉这行的注释
     $timeout = %s;
 
     $ch  = curl_init($url);
@@ -77,8 +76,6 @@ function parseCurlToCode($curlContent, $withCookie = false, $timeout = 10) {
     if(!empty($header)) {
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);     //使用header头信息
     }
-    // curl_setopt($ch,CURLOPT_COOKIEJAR,$cookieSaveFile); //存储提交后得到的cookie数据
-    // curl_setopt($ch,CURLOPT_COOKIEFILE,$cookieGetFile); //使用提交后得到的cookie数据做参数
     //超时时间
     curl_setopt($ch, CURLOPT_TIMEOUT, (int)$timeout);
     //执行
@@ -93,7 +90,7 @@ function parseCurlToCode($curlContent, $withCookie = false, $timeout = 10) {
     echo $content;
 CONTENT;
 
-    return sprintf($tpl, $url, var_export($header, true), var_export($postData, true), var_export($cookie, true), $timeout);
+    return sprintf($tpl, $url, var_export($header, true), var_export($postData, true), $cookieComment, var_export($cookie, true), $timeout);
 
 }
 if(!empty($_POST['curl'])) {
