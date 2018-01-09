@@ -94,13 +94,30 @@ CONTENT;
 
 }
 if(!empty($_POST['curl'])) {
+    if(strlen($_POST['curl']) > 16384) {
+        exit('curl内容过长');
+    }
     if(!isset($_POST['withCookie'])) {
         $_POST['withCookie'] = false;
     }
     if(!isset($_POST['timeout']) || !abs((int)$_POST['timeout'])) {
         $_POST['timeout'] = 10;
     }
+    ob_start();
     highlight_string(parseCurlToCode($_POST['curl'], (bool)$_POST['withCookie'], $_POST['timeout']));
+    $content = ob_get_contents();
+    ob_clean();
+
+    $filename = md5(implode('_', [$_POST['curl'], (int)$_POST['withCookie'], $_POST['timeout']])) . '.html';
+
+    $dir = __DIR__ . '/parseCurlCode/' . date('Ymd/');
+    if(!is_dir($dir)) {
+        @mkdir($dir, 0777);
+    }
+
+    @file_put_contents( $dir . $filename, $content);
+
+    header('Location: ./parseCurlCode/' . date('Ymd/') . $filename);
     exit;
 }
 ?>

@@ -146,7 +146,7 @@ class CurlAutoLogin {
 
         //add cookie support
         //设置一个不存在的目录以在系统临时目录随机生成一个缓存文件，避免多进程cookie覆盖
-        $cookieFile = tempnam('/not_exist_dir/', 'autologin');
+        $cookieFile = @tempnam('/not_exist_dir/', 'autologin');
         curl_setopt($ch,CURLOPT_COOKIEJAR,$cookieFile); //存储提交后得到的cookie数据
 
         //add previous curl cookie

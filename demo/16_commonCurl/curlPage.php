@@ -50,7 +50,7 @@ function curlPage( $url, $postData = array(), $header = array(), $opts = array()
     //额外option
     if(!empty($opts)) {
         foreach($opts as $key => $value) {
-            curl_setopt($ch, $key, $value);      //使用header头信息
+            curl_setopt($ch, $key, $value);      //自定义OPT
         }
     }
 
