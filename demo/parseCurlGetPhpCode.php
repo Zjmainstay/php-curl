@@ -103,6 +103,13 @@ if(!empty($_POST['curl'])) {
     if(!isset($_POST['timeout']) || !abs((int)$_POST['timeout'])) {
         $_POST['timeout'] = 10;
     }
+
+    if(empty($_POST['share'])) {
+        highlight_string(parseCurlToCode($_POST['curl'], (bool)$_POST['withCookie'], $_POST['timeout']));
+        exit;
+    }
+
+    //分享
     ob_start();
     highlight_string(parseCurlToCode($_POST['curl'], (bool)$_POST['withCookie'], $_POST['timeout']));
     $content = ob_get_contents();
@@ -132,6 +139,7 @@ if(!empty($_POST['curl'])) {
         <div>cURL命令：<textarea name="curl" rows="10" cols="100" placeholder="curl 'http://www.zjmainstay.cn/php-curl' -H 'Host: www.zjmainstay.cn' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:53.0) Gecko/20100101 Firefox/53.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3' --compressed -H 'Cookie: Hm_lvt_152=1494236060' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H 'Cache-Control: max-age=0'"></textarea></div>
         <div>携带Cookie:<input type="checkbox" name="withCookie"></div>
         <div>超时时间:<input type="text" name="timeout" value="10" placeholder="cURL超时时间"></div>
+        <div>分享:<input type="checkbox" name="share"></div>
         <div><input type="submit" value="提交"></div>
     </form>
     <br>
