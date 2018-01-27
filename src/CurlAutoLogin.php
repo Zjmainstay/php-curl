@@ -99,7 +99,7 @@ class CurlAutoLogin {
         }
 
         //get data
-        if(!preg_match("#--data '([^']*)'#is", $curlContent, $postDataMatch)) {
+        if(!preg_match("#--data \\$?'([^']*)'#is", $curlContent, $postDataMatch)) {
             $postData = '';
         } else {
             $postData = $postDataMatch[1];
