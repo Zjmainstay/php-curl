@@ -10,7 +10,7 @@
         "php 模拟登录采集"
     ],
     "homepage": "http://www.zjmainstay.cn",
-    "license": "Apache License v2.0",
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "Zjmainstay",
