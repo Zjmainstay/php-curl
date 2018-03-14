@@ -1,15 +1,6 @@
 <?php
 
 namespace PHPCurl;
-
-/**
- * class CurlAutoLogin
- * @author Zjmainstay
- * @website http://www.zjmainstay.cn/php-curl
- * @project https://github.com/Zjmainstay/php-curl
- *
- * 利用curl信息自动解析实现模拟登录
- */
 /**
  * class CurlAutoLogin
  * @author Zjmainstay
