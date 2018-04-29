@@ -22,16 +22,9 @@ if(!preg_match('#"x-csrf-token","([^"]+)"#i', $content, $match)) {
 }
 $csrfToken = $match[1];
 
-$cookieContent = $autologin->getLastCookieContent();
-preg_match('#koa\.sid\s*(.+)#i', $cookieContent, $match);
-$koaSid = $match[1];
-
-preg_match('#koa\.sid\.sig\s*(.+)#i', $cookieContent, $match);
-$koaSidSig = $match[1];
-
 $delimiter = '-----------------------------' . rand(1000000000, 9999999999) . rand(1000000000, 9999999999) . rand(10000000, 99999999);
 $filePath = __DIR__ . '/../images/get-curl-text.png';
-$data = buildFileHeader($delimiter, 'img', $filePath);
+$data = buildFileUploadData($delimiter, 'img', $filePath);
 $contentType = 'multipart/form-data; boundary=' . $delimiter;
 $contentLength = strlen($data);
 
@@ -39,15 +32,23 @@ $contentLength = strlen($data);
 // $apiUrl = 'http://upload.otar.im/api/upload/smms';
 $apiUrl = 'http://upload.otar.im/api/upload/imgur';
 
-$curl = "curl '{$apiUrl}' -H 'Accept: */*' --compressed -H 'Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2' -H 'Connection: keep-alive' -H 'Cookie: koa.sid={$koaSid}; koa.sid.sig={$koaSidSig}' -H 'Host: upload.otar.im' -H 'Referer: http://upload.otar.im/' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:59.0) Gecko/20100101 Firefox/59.0' -H 'x-csrf-token: {$csrfToken}' -H 'Content-Type: {$contentType}' -H 'Content-Length: {$contentLength}'";
+$curl = "curl '{$apiUrl}' -H 'Accept: */*' --compressed -H 'Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2' -H 'Connection: keep-alive' -H 'Cookie: koa.sid=6fuuKG4qGhJg2CFP0Y3Go1X92QKNjlI2; koa.sid.sig=FqGx8un0r_LBzf_60ROuaik-pPE' -H 'Host: upload.otar.im' -H 'Referer: http://upload.otar.im/' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:59.0) Gecko/20100101 Firefox/59.0' -H 'x-csrf-token: {$csrfToken}' -H 'Content-Type: {$contentType}' -H 'Content-Length: {$contentLength}'";
+// die(var_dump($curl));
 $content = $autologin->execCurl($curl, function($parseCurlResult) use ($data) {
     $parseCurlResult['post'] = $data;
     return $parseCurlResult;
 });
 
-var_dump($content);
+echo $content;
 
-function buildFileHeader($delimiter, $inputName, $file) {
+/**
+ * 构建文件上传数据
+ * @param  [type] $delimiter [description]
+ * @param  [type] $inputName [description]
+ * @param  [type] $file      [description]
+ * @return [type]            [description]
+ */
+function buildFileUploadData($delimiter, $inputName, $file) {
     $data = '';
     $data .= "--" . $delimiter . "\r\n";
     $data .= 'Content-Disposition: form-data; name="' . $inputName . '";' .
