@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 图床图片上传
+ * 草料图片上传二维码解析
  * @author Zjmainstay
  * @website http://www.zjmainstay.cn
  * @project https://github.com/Zjmainstay/php-curl
