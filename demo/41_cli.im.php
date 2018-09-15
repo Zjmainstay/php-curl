@@ -12,10 +12,10 @@ require_once __DIR__.'/../vendor/autoload.php';
 $autologin = new PHPCurl\CurlAutoLogin();
 
 //1. 初始化首页
-$curl = "curl 'https://upload.api.cli.im/upload.php?kid=cliim' -X OPTIONS -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:61.0) Gecko/20100101 Firefox/61.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2' --compressed -H 'Access-Control-Request-Method: POST' -H 'Origin: https://cli.im' -H 'Connection: keep-alive'";
-$content = $autologin->execCurl($curl);
+// $curl = "curl 'https://upload.api.cli.im/upload.php?kid=cliim' -X OPTIONS -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:61.0) Gecko/20100101 Firefox/61.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2' --compressed -H 'Access-Control-Request-Method: POST' -H 'Origin: https://cli.im' -H 'Connection: keep-alive'";
+// $content = $autologin->execCurl($curl);
 
-echo "1. " . $content . "\n";
+// echo "1. " . $content . "\n";
 
 $delimiter = '-----------------------------' . rand(1000000000, 9999999999) . rand(1000000000, 9999999999) . rand(10000000, 99999999);
 $filePath = __DIR__ . '/../images/php-curl-qrcode.png';
