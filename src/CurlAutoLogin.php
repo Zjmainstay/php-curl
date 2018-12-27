@@ -15,6 +15,8 @@ class CurlAutoLogin {
     protected $lockedLastCookieFile = false;
     //日志路径
     protected $logPath = '';
+    //全局opt
+    protected $globalOpts = [];
 
     public function __construct($logPath = '') {
         if(!empty($logPath) && is_writable($logPath)) {
@@ -22,6 +24,15 @@ class CurlAutoLogin {
         } else {
             $this->logPath = dirname(__FILE__) . '/../logs/run.log';
         }
+    }
+
+    /**
+     * 设置全局请求opt（方便使用代理之类的请求）
+     * @param $opts
+     */
+    public function setGlobalOpts($opts = [])
+    {
+        $this->globalOpts += $opts;
     }
 
     /**
@@ -33,12 +44,13 @@ class CurlAutoLogin {
      */
     public function execCurl($curlContent, $callbackBefore = false, $callbackAfter = false) {
         $parseCurlResult = $this->parseCurl($curlContent);
-        if(!empty($callbackBefore)) {
+        if(is_callable($callbackBefore)) {
             $parseCurlResult = $callbackBefore($parseCurlResult);
         }
+        $parseCurlResult['opt'] += $this->globalOpts;
         $execCurlResult  = $this->_execCurl($parseCurlResult);
 
-        if(!empty($callbackAfter)) {
+        if(is_callable($callbackAfter)) {
             $execCurlResult = $callbackAfter($parseCurlResult, $execCurlResult);
         }
 
@@ -55,7 +67,7 @@ class CurlAutoLogin {
     public function execCurlWithCookie($curlContent, $callbackBefore = false, $callbackAfter = false) {
         return $this->execCurl($curlContent, function($parseCurlResult) use ($callbackBefore) {
             $parseCurlResult['header'][] = $parseCurlResult['cookie'];
-            if(!empty($callbackBefore)) {
+            if(is_callable($callbackBefore)) {
                 $parseCurlResult = $callbackBefore($parseCurlResult);
             }
             return $parseCurlResult;
@@ -154,7 +166,7 @@ class CurlAutoLogin {
         //extend opt
         if(!empty($parseCurlResult['opt'])) {
             foreach ($parseCurlResult['opt'] as $key => $value) {
-                curl_setopt($ch,$key, $value);
+                curl_setopt($ch, $key, $value);
             }
         }
 
