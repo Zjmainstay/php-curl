@@ -152,5 +152,8 @@ if(!empty($_POST['curl'])) {
         <br>
         <img src="../images/get-curl-text.png" alt="如何获取cURL命令" width="800">
     </p>
+    <p>
+        <span>更多PHP cURL内容，请查看博客《<a href="http://www.zjmainstay.cn/php-curl" target="_blank">PHP cURL实现模拟登录与采集使用方法详解</a>》</span>
+    </p>
 </body>
 </html>
