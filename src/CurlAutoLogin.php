@@ -17,6 +17,8 @@ class CurlAutoLogin {
     protected $logPath = '';
     //全局opt
     protected $globalOpts = [];
+    //最后请求参数
+    protected $lastExecParams = [];
 
     public function __construct($logPath = '') {
         if(!empty($logPath) && is_writable($logPath)) {
@@ -33,6 +35,7 @@ class CurlAutoLogin {
     public function setGlobalOpts($opts = [])
     {
         $this->globalOpts += $opts;
+        return $this;
     }
 
     /**
@@ -40,9 +43,14 @@ class CurlAutoLogin {
      * @param  string  $curlContent    利用Firefox浏览器复制cURL命令
      * @param  boolean $callbackBefore 对curl结果前置处理，如更换用户名、密码等
      * @param  boolean $callbackAfter  对采集结果后置处理，如解析结果的csrf token等
+     * @param  boolean $storeParams    是否存储最后请求参数供重放使用，默认存储
      * @return mixed
      */
-    public function execCurl($curlContent, $callbackBefore = false, $callbackAfter = false) {
+    public function execCurl($curlContent, $callbackBefore = false, $callbackAfter = false, $storeParams = true) {
+        //存储参数供请求重放使用
+        if($storeParams) {
+            $this->lastExecParams = func_get_args();
+        }
         $parseCurlResult = $this->parseCurl($curlContent);
         if(is_callable($callbackBefore)) {
             $parseCurlResult = $callbackBefore($parseCurlResult);
@@ -55,6 +63,39 @@ class CurlAutoLogin {
         }
 
         return $execCurlResult;
+    }
+
+    /**
+     * 重放请求
+     * @return mixed
+     */
+    public function repeatRequest()
+    {
+        //最后一次请求参数不为空才重放
+        if(!empty($this->lastExecParams)) {
+            list($curlContent, $callbackBefore, $callbackAfter) = array_pad($this->lastExecParams, 3, false);
+            return $this->execCurl($curlContent, $callbackBefore, $callbackAfter, true);
+        }
+        return null;
+    }
+
+    /**
+     * 获取最后一次请求参数
+     * @return array
+     */
+    public function getLastExecParams()
+    {
+        return $this->lastExecParams;
+    }
+
+    /**
+     * 主动销毁最后一次请求参数
+     * @return $this
+     */
+    public function unsetLastExecParams()
+    {
+        $this->lastExecParams = [];
+        return $this;
     }
 
     /**
@@ -195,6 +236,7 @@ class CurlAutoLogin {
      */
     public function setLogPath($logPath) {
         $this->logPath = $logPath;
+        return $this;
     }
 
     /**
@@ -230,6 +272,7 @@ class CurlAutoLogin {
         if(!$this->lockedLastCookieFile) {
             $this->lastCookieFile = $cookieFile;
         }
+        return $this;
     }
 
     /**
@@ -237,6 +280,7 @@ class CurlAutoLogin {
      */
     public function removeLastCookie() {
         file_put_contents($this->getLastCookieFile(), '');
+        return $this;
     }
 
     /**
@@ -245,6 +289,7 @@ class CurlAutoLogin {
      */
     public function lockLastCookieFile() {
         $this->lockedLastCookieFile = true;
+        return $this;
     }
 
     /**
@@ -253,6 +298,7 @@ class CurlAutoLogin {
      */
     public function unlockLastCookieFile() {
         $this->lockedLastCookieFile = false;
+        return $this;
     }
 
     /**
