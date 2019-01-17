@@ -143,11 +143,14 @@ class CurlAutoLogin {
         }
 
         //get data
-        if(!preg_match("#--data \\$?'([^']*)'#is", $curlContent, $postDataMatch)) {
-            $postData = '';
-        } else {
-            $postData = $postDataMatch[1];
+        //单引号
+        if(!preg_match("#(?:--data\S*|-d) \\$?'([^']*)'#is", $curlContent, $postDataMatch)) {
+            //双引号
+            if(!preg_match('#(?:--data\S*|-d) \\$?"([^"]*)"#is', $curlContent, $postDataMatch)) {
+                $postDataMatch[1] = '';
+            }
         }
+        $postData = $postDataMatch[1];
 
         return array(
             'url'       => $matchUrl[1],
@@ -245,7 +248,11 @@ class CurlAutoLogin {
      * @return [type]      [description]
      */
     protected function _log($msg) {
-        file_put_contents($this->logPath, $msg . "\n", FILE_APPEND);
+        try {
+            $res = file_put_contents($this->logPath, $msg . "\n", FILE_APPEND);
+        } catch (\Exception $e) {
+            error_log("CurlAutoLogin 无法写入日志文件 {$this->logPath}: {$msg}");
+        }
     }
 
     /**
@@ -261,7 +268,25 @@ class CurlAutoLogin {
      * @return string
      */
     public function getLastCookieContent() {
-        return file_get_contents($this->getLastCookieFile());
+        if($file = $this->getLastCookieFile()) {
+            if(file_exists($file)) {
+                return file_get_contents($file);
+            }
+        }
+        return '';
+    }
+
+    /**
+     * 手动追加cookie内容
+     * @param $content
+     * @return bool|int
+     */
+    public function appendCookieContent($content)
+    {
+        if(file_exists($file = $this->getLastCookieFile())) {
+            return file_put_contents($file, $content . "\n", FILE_APPEND);
+        }
+        return false;
     }
 
     /**
@@ -279,7 +304,12 @@ class CurlAutoLogin {
      * 清空上次存储的cookie
      */
     public function removeLastCookie() {
-        file_put_contents($this->getLastCookieFile(), '');
+        if($file = $this->getLastCookieFile()) {
+            //文件存在才清空
+            if(file_exists($file)) {
+                file_put_contents($file, '');
+            }
+        }
         return $this;
     }
 
