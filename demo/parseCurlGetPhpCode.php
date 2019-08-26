@@ -23,7 +23,7 @@ function parseCurlToCode($curlContent, $withCookie = false, $timeout = 10) {
     //remove cookie data in header
     $curlContent = preg_replace("#-H 'Cookie:[^']*'#is", '', $curlContent);
     //get header
-    if(!preg_match_all("#-H '([^']*?)'#is", $curlContent, $headerMatches)) {
+    if(!preg_match_all("#-H '([^']*?)'#is", $curlContent, $headerMatches) && !preg_match_all('#-H "([^"]*?)"#is', $curlContent, $headerMatches)) {
         $httpHeader = array();
     } else {
         $httpHeader = $headerMatches[1];
@@ -57,6 +57,8 @@ function parseCurlToCode($curlContent, $withCookie = false, $timeout = 10) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);       //返回数据不直接输出
     curl_setopt($ch, CURLOPT_ENCODING, "gzip");        //指定gzip压缩
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);    //302/301
+    //报错：Problem (2) in the Chunked-Encoded data
+    //curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
     //SSL
     if(substr($url, 0, 8) === 'https://') {
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
