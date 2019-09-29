@@ -46,14 +46,6 @@ function curlPage( $url, $postData = array(), $header = array(), $opts = array()
     if(!empty($header)) {
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);      //使用header头信息
     }
-
-    //额外option
-    if(!empty($opts)) {
-        foreach($opts as $key => $value) {
-            curl_setopt($ch, $key, $value);      //自定义OPT
-        }
-    }
-
     //存储cookie到文件
     if(!empty($cookieSaveFile)) {
         curl_setopt($ch,CURLOPT_COOKIEJAR,$cookieSaveFile); //存储提交后得到的cookie数据
@@ -65,6 +57,12 @@ function curlPage( $url, $postData = array(), $header = array(), $opts = array()
     //超时时间
     if(!empty($timeout)) {
         curl_setopt($ch, CURLOPT_TIMEOUT, (int)$timeout);
+    }
+    //额外option
+    if(!empty($opts)) {
+        foreach($opts as $key => $value) {
+            curl_setopt($ch, $key, $value);      //自定义OPT
+        }
     }
     //执行
     $content = curl_exec($ch);
