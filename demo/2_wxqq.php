@@ -53,3 +53,15 @@ if($res) {
 } else {
     echo "No" . $lineBreak;
 }
+
+//方法三 直接调用execCurlWithCookie调用
+$autologin = new PHPCurl\CurlAutoLogin();
+//复制浏览器登录成功后，访问 https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxcheckurl?requrl=http%3A%2F%2Fwww.zjmainstay.cn 的curl命令
+$curl = "curl 'https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxcheckurl?requrl=http%3A%2F%2Fwww.zjmainstay.cn' -H 'Host: wx.qq.com' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:47.0) Gecko/20100101 Firefox/46.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3' -H 'Accept-Encoding: gzip, deflate, br' -H 'Cookie: pgv_info=ssid=s7821947904; pgv_pvid=7479620263 ...' -H 'Connection: keep-alive' -H 'Cache-Control: max-age=0'";
+$content = $autologin->execCurlWithCookie($curl);
+$res = $autologin->assertContainStr($content, '请不要在该网页上填写QQ账号及密码');
+if($res) {
+    echo "Yes" . $lineBreak;
+} else {
+    echo "No" . $lineBreak;
+}

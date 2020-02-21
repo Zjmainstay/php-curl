@@ -15,9 +15,9 @@ class CurlAutoLogin {
     protected $lockedLastCookieFile = false;
     //日志路径
     protected $logPath = '';
-    //全局opt
+    //全局opt，方便使用代理之类的请求
     protected $globalOpts = [];
-    //最后请求参数
+    //最后一次请求参数，用于重放请求
     protected $lastExecParams = [];
 
     public function __construct($logPath = '') {
@@ -39,7 +39,7 @@ class CurlAutoLogin {
     }
 
     /**
-     * 根据curl信息执行并解析结果
+     * 根据curl信息执行并解析结果，核心方法常用方法之一
      * @param  string  $curlContent    利用Firefox浏览器复制cURL命令
      * @param  boolean $callbackBefore 对curl结果前置处理，如更换用户名、密码等
      * @param  boolean $callbackAfter  对采集结果后置处理，如解析结果的csrf token等
@@ -66,7 +66,24 @@ class CurlAutoLogin {
     }
 
     /**
-     * 重放请求
+     * 携带cookie执行curl命令，核心方法常用方法之一，直接利用curl命令里的header头cookie参数
+     * @param  string  $curlContent    利用Firefox浏览器复制cURL命令
+     * @param  boolean $callbackBefore 对curl结果前置处理，如更换用户名、密码等
+     * @param  boolean $callbackAfter  对采集结果后置处理，如解析结果的csrf token等
+     * @return mixed
+     */
+    public function execCurlWithCookie($curlContent, $callbackBefore = false, $callbackAfter = false) {
+        return $this->execCurl($curlContent, function($parseCurlResult) use ($callbackBefore) {
+            $parseCurlResult['header'][] = $parseCurlResult['cookie'];
+            if(is_callable($callbackBefore)) {
+                $parseCurlResult = $callbackBefore($parseCurlResult);
+            }
+            return $parseCurlResult;
+        }, $callbackAfter);
+    }
+
+    /**
+     * 重放请求，依赖登录的场景出现登录失败的情况，重新登录后，调用此方法重试上一次的请求
      * @return mixed
      */
     public function repeatRequest()
@@ -96,23 +113,6 @@ class CurlAutoLogin {
     {
         $this->lastExecParams = [];
         return $this;
-    }
-
-    /**
-     * 携带cookie执行curl命令
-     * @param  string  $curlContent    利用Firefox浏览器复制cURL命令
-     * @param  boolean $callbackBefore 对curl结果前置处理，如更换用户名、密码等
-     * @param  boolean $callbackAfter  对采集结果后置处理，如解析结果的csrf token等
-     * @return mixed
-     */
-    public function execCurlWithCookie($curlContent, $callbackBefore = false, $callbackAfter = false) {
-        return $this->execCurl($curlContent, function($parseCurlResult) use ($callbackBefore) {
-            $parseCurlResult['header'][] = $parseCurlResult['cookie'];
-            if(is_callable($callbackBefore)) {
-                $parseCurlResult = $callbackBefore($parseCurlResult);
-            }
-            return $parseCurlResult;
-        }, $callbackAfter);
     }
 
     /**
@@ -214,6 +214,7 @@ class CurlAutoLogin {
             }
         }
 
+        $content = '';
         try {
             $content = curl_exec($ch); //执行并存储结果
         } catch (\Exception $e) {
@@ -264,7 +265,7 @@ class CurlAutoLogin {
     }
 
     /**
-     * 获取cookie内容
+     * 获取最后一次存储的cookie内容
      * @return string
      */
     public function getLastCookieContent() {
@@ -277,7 +278,7 @@ class CurlAutoLogin {
     }
 
     /**
-     * 手动追加cookie内容
+     * 手动追加cookie内容到最后一次存储的cookie文件
      * @param $content
      * @return bool|int
      */
@@ -332,7 +333,7 @@ class CurlAutoLogin {
     }
 
     /**
-     * 登录成功， get 方式获取url信息
+     * 登录成功后，锁定cookie，可以基于get方式获取url信息
      * @param  [type]  $url    [description]
      * @param  boolean $header [description]
      * @return [type]          [description]
@@ -377,7 +378,7 @@ class CurlAutoLogin {
     }
 
     /**
-     * 登录成功， post 方式获取url信息
+     * 登录成功后，锁定cookie，可以基于post方式获取url信息
      * @param  [type]  $url      [description]
      * @param  boolean $postData [description]
      * @param  boolean $header   [description]
@@ -412,6 +413,7 @@ class CurlAutoLogin {
             curl_setopt($ch,CURLOPT_POSTFIELDS, $postData);
         }
 
+        $content = '';
         try {
             $content = curl_exec($ch); //执行并存储结果
         } catch (\Exception $e) {
@@ -430,8 +432,8 @@ class CurlAutoLogin {
 
     /**
      * 断言内容中包含某个字符（判断登录信息，如“退出”字眼）
-     * @param $content 内容
-     * @param $substr 包含字符串
+     * @param string $content  内容
+     * @param string $substr 包含字符串
      */
     public function assertContainStr($content, $substr) {
         if(false !== stripos($content, $substr)) {
