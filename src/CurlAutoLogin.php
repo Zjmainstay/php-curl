@@ -25,6 +25,11 @@ class CurlAutoLogin {
             $this->logPath = $logPath;
         } else {
             $this->logPath = dirname(__FILE__) . '/../logs/run.log';
+            if(!file_exists($this->logPath)) {
+                if(!is_dir(dirname($this->logPath))) {
+                    mkdir(dirname($this->logPath), 0755, true);
+                }
+            }
         }
     }
 
