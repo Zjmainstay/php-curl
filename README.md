@@ -5,7 +5,12 @@ PHP利用cURL实现模拟登录与采集，提供大量示例。（关键词：p
 
 基于浏览器cURL命令快速生成PHP代码：[基于cURL命令解析获得PHP代码](http://demo.zjmainstay.cn/php/github/php-curl/demo/parseCurlGetPhpCode.php)
 
-# 单独使用
+## 依赖
+
+PHP: >=5.4
+
+## 单独使用
+
 ```php
 git clone https://github.com/Zjmainstay/php-curl.git
 cd php-curl
@@ -14,7 +19,7 @@ composer install
 php demo/1_simpleAutoLogin.php
 ```
 
-# composer引入
+## composer引入
 
 ```php
 composer require zjmainstay/php-curl
@@ -25,7 +30,7 @@ composer install
 php demo/1_simpleAutoLogin.php
 ```
 
-# 直接引入类
+## 直接引入类
 
 ```php
 require_once __DIR__.'/../src/CurlAutoLogin.php'; # 使用时注意路径
@@ -36,9 +41,9 @@ $autologin = new PHPCurl\CurlAutoLogin();
 
 
 
-# CurlAutoLogin 介绍
+## CurlAutoLogin 介绍
 
-## 属性
+### 属性
 
 ```php
 //最后一次cookie存储文件
@@ -53,7 +58,7 @@ protected $globalOpts = [];
 protected $lastExecParams = [];
 ```
 
-## 方法
+### 方法
 
 ```php
 // ================== 1.常用方法 ==================
@@ -125,7 +130,7 @@ protected function _log($msg)
 
 
 
-# demo介绍
+## demo介绍
 
 ```php
 //简易模拟登录示例，直接引用CurlAutoLogin类进行调用
