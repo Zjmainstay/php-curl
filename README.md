@@ -212,6 +212,10 @@ protected function _log($msg)
 //简介：首先模拟无登录态请求，异常后模拟登录，然后重放请求得到正常结果
 48_request_repeat.php
 
+//tophub.today抓取demo
+//简介：知乎热榜网站抓取
+61_tophub.today.php
+
 //基于curl解析得到PHP代码
 parseCurlGetPhpCode.php
 
