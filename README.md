@@ -5,6 +5,8 @@ PHP利用cURL实现模拟登录与采集，提供大量示例。（关键词：p
 
 基于浏览器cURL命令快速生成PHP代码：[基于cURL命令解析获得PHP代码](http://demo.zjmainstay.cn/php/github/php-curl/demo/parseCurlGetPhpCode.php)
 
+自动模拟登录+批量请求示例：[模拟登录后批量下载笔记](https://github.com/Zjmainstay/php-curl/blob/master/demo/62_curlmulti/62_wiz.cn.php)
+
 ## 依赖
 
 PHP: >=5.4
