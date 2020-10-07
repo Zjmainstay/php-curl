@@ -127,7 +127,7 @@ class CurlAutoLogin {
      */
     public function parseCurl($curlContent) {
         if(!preg_match("#curl '([^']*)'#is", $curlContent, $matchUrl)
-        || !preg_match("#curl.*'([^']*)'\s*$#is", $curlContent, $matchUrl)
+        && !preg_match("#curl.*'([^']*)'\s*$#is", $curlContent, $matchUrl)
         ) {
             return false;
         }
