@@ -7,6 +7,10 @@
  * Time: 09:33
  */
 
+//注意：本示例执行前，请先执行 composer install 初始化项目依赖
+//注意：本示例执行前，请先执行 composer install 初始化项目依赖
+//注意：本示例执行前，请先执行 composer install 初始化项目依赖
+
 require __DIR__ . '/vendor/autoload.php';
 header("Content-type: text/html; charset=utf-8");
 
