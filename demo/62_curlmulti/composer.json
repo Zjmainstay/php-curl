@@ -1,0 +1,16 @@
+{
+    "name": "zjmainstay/php-curl-multi",
+    "description": "基于cURL命令自动登录后，引用ares333/php-curl类库进行批量采集。",
+    "type": "project",
+    "require": {
+        "zjmainstay/php-curl": "^1.0",
+        "ares333/php-curl": "^4.6"
+    },
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Zjmainstay",
+            "email": "hzgdys@163.com"
+        }
+    ]
+}

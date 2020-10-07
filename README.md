@@ -220,6 +220,10 @@ protected function _log($msg)
 //tophub.today抓取demo
 //简介：知乎热榜网站抓取
 61_tophub.today.php
+  
+//【精华推荐】为知笔记模拟登录后，批量下载笔记
+//简介：本示例实现模拟登录与ares333/php-curl批量执行类库结合，演示如何模拟登录后，基于登录态进行批量下载笔记
+62_curlmulti/62_wiz.cn.php
 
 //基于curl解析得到PHP代码
 parseCurlGetPhpCode.php
