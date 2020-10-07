@@ -126,7 +126,9 @@ class CurlAutoLogin {
      * @return bool|array
      */
     public function parseCurl($curlContent) {
-        if(!preg_match("#curl '([^']*)'#is", $curlContent, $matchUrl)) {
+        if(!preg_match("#curl '([^']*)'#is", $curlContent, $matchUrl)
+        || !preg_match("#curl.*'([^']*)'\s*$#is", $curlContent, $matchUrl)
+        ) {
             return false;
         }
 
@@ -366,6 +368,7 @@ class CurlAutoLogin {
 
         curl_setopt($ch,CURLOPT_COOKIEFILE, $this->lastCookieFile); //使用提交后得到的cookie数据
 
+        $content = '';
         try {
             $content = curl_exec($ch); //执行并存储结果
         } catch (\Exception $e) {
@@ -438,10 +441,10 @@ class CurlAutoLogin {
     /**
      * 断言内容中包含某个字符（判断登录信息，如“退出”字眼）
      * @param string $content  内容
-     * @param string $substr 包含字符串
+     * @param string $subStr 包含字符串
      */
-    public function assertContainStr($content, $substr) {
-        if(false !== stripos($content, $substr)) {
+    public function assertContainStr($content, $subStr) {
+        if(false !== stripos($content, $subStr)) {
             return true;
         }
 
