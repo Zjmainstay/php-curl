@@ -18,9 +18,6 @@
             "role": "lead"
         }
     ],
-    "bin": [
-        "phpunit"
-    ],
     "autoload": {
         "psr-4" : {
             "PHPCurl\\" : "src/"
