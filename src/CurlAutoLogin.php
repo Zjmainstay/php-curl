@@ -343,9 +343,10 @@ class CurlAutoLogin {
      * 登录成功后，锁定cookie，可以基于get方式获取url信息
      * @param  [type]  $url    [description]
      * @param  boolean $header [description]
+     * @param  array   $opts   [description]
      * @return [type]          [description]
      */
-    public function getUrl($url, $header = false) {
+    public function getUrl($url, $header = false, $opts = []) {
         $ch = curl_init($url);
         curl_setopt($ch,CURLOPT_HEADER,0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //返回数据不直接输出
@@ -367,6 +368,14 @@ class CurlAutoLogin {
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
         curl_setopt($ch,CURLOPT_COOKIEFILE, $this->lastCookieFile); //使用提交后得到的cookie数据
+
+        //extend opt
+        $opts += $this->globalOpts;
+        if(!empty($opts)) {
+            foreach ($opts as $key => $value) {
+                curl_setopt($ch, $key, $value);
+            }
+        }
 
         $content = '';
         try {
@@ -390,9 +399,10 @@ class CurlAutoLogin {
      * @param  [type]  $url      [description]
      * @param  boolean $postData [description]
      * @param  boolean $header   [description]
+     * @param  array   $opts     [description]
      * @return [type]            [description]
      */
-    public function postUrl($url, $postData = false, $header = false) {
+    public function postUrl($url, $postData = false, $header = false, $opts = []) {
         $ch = curl_init($url);
         curl_setopt($ch,CURLOPT_HEADER,0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //返回数据不直接输出
@@ -419,6 +429,14 @@ class CurlAutoLogin {
         curl_setopt($ch,CURLOPT_POST, 1);
         if(!empty($postData)) {
             curl_setopt($ch,CURLOPT_POSTFIELDS, $postData);
+        }
+
+        //extend opt
+        $opts += $this->globalOpts;
+        if(!empty($opts)) {
+            foreach ($opts as $key => $value) {
+                curl_setopt($ch, $key, $value);
+            }
         }
 
         $content = '';
