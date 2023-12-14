@@ -19,8 +19,11 @@ class CurlAutoLogin {
     protected $globalOpts = [];
     //最后一次请求参数，用于重放请求
     protected $lastExecParams = [];
+    //程序完全退出时，清理cookie文件避免文件堆积
+    protected $removeCookieFileAtDestruct = false;
 
-    public function __construct($logPath = '') {
+    public function __construct($logPath = '', $removeCookieFileAtDestruct = false) {
+        $this->removeCookieFileAtDestruct = $removeCookieFileAtDestruct;
         if(!empty($logPath) && is_writable($logPath)) {
             $this->logPath = $logPath;
         } else {
@@ -30,6 +33,15 @@ class CurlAutoLogin {
                     mkdir(dirname($this->logPath), 0755, true);
                 }
             }
+        }
+    }
+
+    //程序退出销毁处理
+    public function __destruct()
+    {
+        //如果设置了清理cookie文件
+        if($this->removeCookieFileAtDestruct && file_exists($this->getLastCookieFile())) {
+            unlink($this->getLastCookieFile());
         }
     }
 
@@ -127,7 +139,7 @@ class CurlAutoLogin {
      */
     public function parseCurl($curlContent) {
         if(!preg_match("#curl '([^']*)'#is", $curlContent, $matchUrl)
-        && !preg_match("#curl.*'([^']*)'\s*$#is", $curlContent, $matchUrl)
+            && !preg_match("#curl.*'([^']*)'\s*$#is", $curlContent, $matchUrl)
         ) {
             return false;
         }
@@ -199,13 +211,12 @@ class CurlAutoLogin {
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
         //add cookie support
-        //设置一个不存在的目录以在系统临时目录随机生成一个缓存文件，避免多进程cookie覆盖
-        $cookieFile = tempnam('/not_exist_dir/', 'autologin');
+        $cookieFile = $this->getTempFile();
         curl_setopt($ch,CURLOPT_COOKIEJAR,$cookieFile); //存储提交后得到的cookie数据
 
         //add previous curl cookie
-        if(!empty($this->lastCookieFile)) {
-            curl_setopt($ch,CURLOPT_COOKIEFILE, $this->lastCookieFile); //使用提交后得到的cookie数据
+        if($this->getLastCookieFile()) {
+            curl_setopt($ch,CURLOPT_COOKIEFILE, $this->getLastCookieFile()); //使用提交后得到的cookie数据
         }
 
         //add post data support
@@ -286,15 +297,37 @@ class CurlAutoLogin {
 
     /**
      * 手动追加cookie内容到最后一次存储的cookie文件
-     * @param $content
+     * @param string $content
+     * @param bool $init
      * @return bool|int
      */
-    public function appendCookieContent($content)
+    public function appendCookieContent($content, $init = true)
     {
-        if(file_exists($file = $this->getLastCookieFile())) {
+        if(file_exists($file = $this->getLastCookieFile()) || $init) {
+            //初始cookie文件
+            if(empty($file)) {
+                $file = $this->getTempFile();
+                if(!$file) {
+                    return false;
+                }
+                $this->setLastCookieFile($file);
+            }
             return file_put_contents($file, $content . "\n", FILE_APPEND);
         }
         return false;
+    }
+
+    /**
+     * 获取临时文件
+     * @return false|string
+     */
+    public function getTempFile() {
+        $file = tempnam(dirname($this->logPath), 'autologin_cookie_');
+        if(!$file) {
+            $this->_log("tempnam创建临时文件失败，请检查");
+            return false;
+        }
+        return $file;
     }
 
     /**
@@ -303,6 +336,10 @@ class CurlAutoLogin {
      */
     public function setLastCookieFile($cookieFile) {
         if(!$this->lockedLastCookieFile) {
+            //移除上一个存储cookie的临时文件
+            if(file_exists($this->lastCookieFile) && $this->lastCookieFile != $cookieFile) {
+                unlink($this->lastCookieFile);
+            }
             $this->lastCookieFile = $cookieFile;
         }
         return $this;
@@ -367,7 +404,7 @@ class CurlAutoLogin {
         //add 302 support
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
-        curl_setopt($ch,CURLOPT_COOKIEFILE, $this->lastCookieFile); //使用提交后得到的cookie数据
+        curl_setopt($ch,CURLOPT_COOKIEFILE, $this->getLastCookieFile()); //使用提交后得到的cookie数据
 
         //extend opt
         $opts += $this->globalOpts;
@@ -423,7 +460,7 @@ class CurlAutoLogin {
         //add 302 support
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
-        curl_setopt($ch,CURLOPT_COOKIEFILE, $this->lastCookieFile); //使用提交后得到的cookie数据
+        curl_setopt($ch,CURLOPT_COOKIEFILE, $this->getLastCookieFile()); //使用提交后得到的cookie数据
 
         //add post data support
         curl_setopt($ch,CURLOPT_POST, 1);
@@ -480,5 +517,20 @@ class CurlAutoLogin {
         }
 
         return $lineBreak;
+    }
+
+    /**
+     * 格式化header头cookie成文件存储格式
+     * @param string $headerCookie //-H 'Cookie: xxxxx=xxxx;'，单引号内容
+     * @param string $domain //授权域名，如www.baidu.com，则传入.baidu.com，根前面有个点
+     */
+    public function formatHeaderCookieToFileContent($headerCookie, $domain) {
+        $rows = [];
+        if(preg_match_all("#([^ ;]+)=([^ ;]+)#i", $headerCookie, $matches)) {
+            foreach($matches[0] as $key => $value) {
+                $rows[] = sprintf("#HttpOnly_%s\tTRUE\t/\tFALSE\t0\t%s\t%s", $domain, $matches[1][$key], $matches[2][$key]);
+            }
+        }
+        return implode("\n", $rows);
     }
 }
