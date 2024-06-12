@@ -533,4 +533,15 @@ class CurlAutoLogin {
         }
         return implode("\n", $rows);
     }
+
+    /**
+     * 从curl内容解析cookie内容并追加保存到cookie文件
+     * @param $curlContent string
+     * @param $domain string //授权域名，如www.baidu.com，则传入.baidu.com，根前面有个点
+     */
+    public function addCookieFromCurl($curlContent, $domain) {
+        $parseCurlResult = $this->parseCurl($curlContent);  //解析curl内容获取cookie内容
+        $cookieContent = $this->formatHeaderCookieToFileContent($parseCurlResult["cookie"], $domain); //格式化cookie内容
+        $this->appendCookieContent($cookieContent);  //追加cookie内容到cookie文件
+    }
 }
