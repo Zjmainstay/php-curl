@@ -122,6 +122,12 @@ public function assertContainStr($content, $substr)
 //获取换行符，用于输出信息显示换行
 public function getLineBreak()
 
+//格式化header头cookie成文件存储格式
+public function formatHeaderCookieToFileContent($headerCookie, $domain)
+
+//从curl内容解析cookie内容并追加保存到cookie文件
+public function addCookieFromCurl($curlContent, $domain)
+
 // ================== 3.底层方法 ==================
 //执行curl请求，底层核心方法，内置了请求的cookie存储与跟踪上一次请求的cookie，实现模拟登录cookie依赖
 protected function _execCurl($parseCurlResult)
