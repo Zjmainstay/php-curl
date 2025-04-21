@@ -151,6 +151,11 @@ class CurlAutoLogin {
             $cookieData = $cookieMatch[1];
         }
 
+        //兼容 -b 参数
+        if(empty($cookieData) && preg_match("#-b '([^']*)'#is", $curlContent, $cookieMatch)) {
+            $cookieData = "Cookie: " . $cookieMatch[1];
+        }
+
         //remove cookie data in header
         $curlContent = preg_replace("#-H 'Cookie:[^']*'#is", '', $curlContent);
 
